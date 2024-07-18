@@ -10,6 +10,7 @@ project(${PROJECT_NAME})
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(mpi-sample)
+add_subdirectory(simpsons_floyd)
 
 #add_subdirectory(queue_lock_free_unbound_aba)
 #add_subdirectory(queue_performance_test)

@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 //    return -1;
 
     std::string& fileName2 = fileName;
-    fileName2 = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/mpi-sample/sample_adjacency_matrix.txt";
+    fileName2 = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/mpi-sample/adjacency_matrix_01_4x4.txt";
 
     switch (example_no)
     {

@@ -39,7 +39,7 @@ std::vector<std::vector<int>> readAdjacencyMatrixFromFile(const std::string file
 
 //int example_read_adjacency_matrix_from_a_file(const std::string& fileName) {
 int example_read_adjacency_matrix_from_a_file() {
-    std::string fileName = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/mpi-sample/sample_adjacency_matrix.txt";
+    std::string fileName = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/mpi-sample/adjacency_matrix_01_4x4.txt";
 
     std::cout << "example_read_adjacency_matrix_from_a_file function ..." << std::endl;
     std::cout << "file name: " << fileName << std::endl;
