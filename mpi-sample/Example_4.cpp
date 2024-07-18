@@ -14,13 +14,15 @@ void print_matrix(const float* matrix, int dim) {
 }
 
 int Example_4() {
+    std::cout << "Example_4 starting" << '\n';
     // Create a random number generator
     std::mt19937 mt(123);
     std::uniform_real_distribution dist(1.0f, 2.0f);
 
     // Create a matrix
     std::vector<float> m;
-    const int dim = 1 << 12;
+//    const int dim = 1 << 12;
+    const int dim = 1 << 2;
     std::generate_n(std::back_inserter(m), dim * dim, [&] { return dist(mt); });
 
     // Performance gaussian elimination
@@ -44,5 +46,7 @@ int Example_4() {
             }
         }
     }
+//    print_matrix(m, dim);
+    std::cout << "Example_4 done" << '\n';
     return 0;
 }

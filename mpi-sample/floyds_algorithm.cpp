@@ -19,14 +19,17 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "Examples.h"
 #include <mpi.h>
-#include "MyMPI.h"
+//#include "MyMPI.h"
+#include "quinn_mpi.h"
 
 typedef int dtype;
 #define MPI_TYPE MPI_INT
 
-int floyds_algorithm(const std:string& fileName) {
+int floyds_algorithm(int argc, char* argv[], char* fileName) {
+    std::cout << "floyds_algorithm starting" << std::endl;
+
     dtype** a;         /* Doubly-subscripted array */
     dtype*  storage;   /* Local portion of array elements */
     int     i, j, k;
@@ -42,7 +45,10 @@ int floyds_algorithm(const std:string& fileName) {
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
 
-    read_row_striped_matrix(argv[1], (void***)&a,  (void**)&storage, MPI_TYPE, &m, &n, MPI_COMM_WORLD);
+    std::cout << id << "/" << p << " floyds_algorithm starting, file=" << fileName << std::endl;
+
+    std::cout << id << "/" << p << " read_row_striped_matrix\n";
+    read_row_striped_matrix(fileName, (void***)&a,  (void**)&storage, MPI_TYPE, &m, &n, MPI_COMM_WORLD);
 
     if (m != n) {
         terminate(id, (char*)"Matrix must be square\n");
@@ -52,6 +58,8 @@ int floyds_algorithm(const std:string& fileName) {
        print_row_striped_matrix ((void **) a, MPI_TYPE, m, n,
           MPI_COMM_WORLD);
     */
+    std::cout << id << "/" << p << " MPI_Barrier\n";
+
     MPI_Barrier(MPI_COMM_WORLD);
     time = -MPI_Wtime();
     compute_shortest_paths(id, p, (dtype**)a, n);
@@ -65,7 +73,9 @@ int floyds_algorithm(const std:string& fileName) {
        print_row_striped_matrix ((void **) a, MPI_TYPE, m, n,
           MPI_COMM_WORLD);
     */
+
     MPI_Finalize();
+    std::cout << id << "/" << p << " done\n";
     return 0;
 }
 

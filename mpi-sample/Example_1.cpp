@@ -19,7 +19,7 @@ int Example_1(int argc, char* argv[])
 
     if (rank == 0) {
         // Process 0 sends the message
-        sprintf_s(message, "Hello, World! This is process %d.", rank);
+        sprintf(message, "Hello, World! This is process %d.", rank);
         MPI_Send(message, strlen(message) + 1, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
     }
     else if (rank == 1) {

@@ -14,7 +14,8 @@ int Example_5(int argc, char* argv[]) {
 
     // Calculate the number of rows mapped to each process
     // Assumes this divides evenly
-    const int dim = 1 << 12;
+//    const int dim = 1 << 12;
+    const int dim = 1 << 3;
     const int n_rows = dim / num_tasks;
 
     // Get the task ID
@@ -22,6 +23,8 @@ int Example_5(int argc, char* argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
     const int start_row = task_id * n_rows;
     const int end_row = start_row + n_rows;
+
+    std::cout << task_id << "," << num_tasks  << " Starting " << '\n';
 
     // Matrix - Only initialized in rank 0
     std::unique_ptr<float[]> matrix;
@@ -34,6 +37,7 @@ int Example_5(int argc, char* argv[]) {
 
     // Only rank 0 create/initializes the matrix
     if (task_id == 0) {
+        std::cout << task_id << "," << num_tasks  << " Init matrix " << '\n';
         // Create a random number generator
         std::mt19937 mt(123);
         std::uniform_real_distribution dist(1.0f, 2.0f);
@@ -45,6 +49,8 @@ int Example_5(int argc, char* argv[]) {
     }
 
     // Before doing anything, send parts of the matrix to each process
+    std::cout << task_id << "," << num_tasks  << " MPI_Scatter " << '\n';
+
     MPI_Scatter(matrix.get(), dim * n_rows, MPI_FLOAT, m_chunk.get(),
         dim * n_rows, MPI_FLOAT, 0, MPI_COMM_WORLD);
 
@@ -52,6 +58,7 @@ int Example_5(int argc, char* argv[]) {
     std::vector<MPI_Request> requests(num_tasks);
 
     // Performance gaussian elimination
+    std::cout << task_id << "," << num_tasks  << " send/wait/recv " << '\n';
     for (int row = 0; row < end_row; row++) {
         // See if this process is responsible for the pivot calculation
         auto mapped_rank = row / n_rows;
@@ -111,10 +118,15 @@ int Example_5(int argc, char* argv[]) {
     }
 
     // Gather the final results into rank 0
+    std::cout << task_id << "," << num_tasks  << " MPI_Gather " << '\n';
+
     MPI_Gather(m_chunk.get(), n_rows * dim, MPI_FLOAT, matrix.get(), n_rows * dim,
         MPI_FLOAT, 0, MPI_COMM_WORLD);
+//    std::cout << task_id << "," << num_tasks  << " result " << '\n';
 
     // Finish our MPI work
     MPI_Finalize();
+
+    std::cout << task_id << "," << num_tasks  << " Done" << '\n';
     return 0;
 }

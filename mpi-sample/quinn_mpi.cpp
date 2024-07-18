@@ -31,6 +31,7 @@ int get_size(MPI_Datatype t) {
     printf("Error: Unrecognized argument to 'get_size'\n");
     fflush(stdout);
     MPI_Abort(MPI_COMM_WORLD, TYPE_ERROR);
+    return 0;
 }
 
 
@@ -243,7 +244,8 @@ void read_checkerboard_matrix(
     rptr = (void**)*storage;
     for (i = 0; i < local_rows; i++) {
         *(lptr++) = (void*)rptr;
-        rptr = (void*) ((int)rptr + local_cols * datum_size);
+//        rptr = (void*) ((int)rptr + local_cols * datum_size);
+        rptr = (void*) ((char*)rptr + local_cols * datum_size);
     }
 
     /* Grid process 0 reads in the matrix one row at a time
@@ -271,7 +273,7 @@ void read_checkerboard_matrix(
                 coords[1] = k;
 
                 /* Find address of first element to send */
-                raddr = (void*)((int)buffer +
+                raddr = (void*)((char*)buffer +
                     BLOCK_LOW(k, grid_size[1], *n) * datum_size);
 
                 /* Determine the grid ID of the process getting
@@ -371,7 +373,7 @@ void read_col_striped_matrix(
     rptr = (void**)*storage;
     for (i = 0; i < *m; i++) {
         *(lptr++) = (void*)rptr;
-        rptr = (void*) ((int) rptr + local_cols * datum_size);
+        rptr = (void*) ((char*) rptr + local_cols * datum_size);
     }
 
     /* Process p-1 reads in the matrix one row at a time and
@@ -384,7 +386,7 @@ void read_col_striped_matrix(
         if (id == (p - 1))
             fread(buffer, datum_size, *n, infileptr);
         MPI_Scatterv(buffer, send_count, send_disp, dtype,
-            (void*)((int)(*storage) + i * local_cols * datum_size), local_cols,
+            (void*)((char*)(*storage) + i * local_cols * datum_size), local_cols,
             dtype, p - 1, comm);
     }
     free(send_count);
@@ -458,7 +460,7 @@ void read_row_striped_matrix(
     rptr = (void**)*storage;
     for (i = 0; i < local_rows; i++) {
         *(lptr++) = (void*)rptr;
-        rptr = (void*) ((int)rptr + *n * datum_size);
+        rptr = (void*) ((char*)rptr + *n * datum_size);
     }
 
     /* Process p-1 reads blocks of rows from file and
@@ -692,7 +694,7 @@ void print_checkerboard_matrix(
                     coords[1] = k;
                     MPI_Cart_rank(grid_comm, coords, &src);
                     els = BLOCK_SIZE(k, grid_size[1], n);
-                    laddr = (void*)((int)buffer + (int) BLOCK_LOW(k, grid_size[1], n) * datum_size);
+                    laddr = (void*)((char*)buffer + (int) BLOCK_LOW(k, grid_size[1], n) * datum_size);
                     if (src == 0) {
                         memcpy(laddr, a[j], els * datum_size);
                     }
@@ -803,7 +805,7 @@ void print_row_striped_matrix(
                 max_block_size * datum_size);
             b[0] = bstorage;
             for (i = 1; i < max_block_size; i++) {
-                b[i] = (void*)((int)b[i - 1] + n * datum_size);
+                b[i] = (void*)((char*)b[i - 1] + n * datum_size);
             }
             for (i = 1; i < p; i++) {
                 MPI_Send(&prompt, 1, MPI_INT, i, PROMPT_MSG,
