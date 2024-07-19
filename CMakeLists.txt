@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(mpi-sample)
 add_subdirectory(a04_simpsons_floyd)
 add_subdirectory(a04_c_cpp_examples)
+add_subdirectory(a05_myMPI)
+add_subdirectory(a05_QMPI)
 
 
 #add_subdirectory(queue_lock_free_unbound_aba)
