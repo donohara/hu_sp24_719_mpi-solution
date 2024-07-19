@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.27)
 
 #---------
-set(PROJECT_NAME c_cpp_examples)
+set(PROJECT_NAME a04_c_cpp_examples)
 message(STATUS "${PROJECT_NAME}: starting")
 #---------
 

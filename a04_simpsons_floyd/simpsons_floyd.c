@@ -25,7 +25,7 @@
 #include <mpi.h>
 
 //=================
-//$ mpirun -np 2 ./cmake-build-debug/simpsons_floyd/simpsons_floyd < ./mpi-sample/adjacency_matrix_01_4x4_int.txt
+// $ mpirun -np 2 ./cmake-build-debug/a04_simpsons_floyd/a04_simpsons_floyd < ./a04_simpsons_floyd/adjacency_matrix_01_4x4.txt
 //=================
 
 const int INFINITY = 1000000;

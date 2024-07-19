@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.27)
 
 #---------
-set(PROJECT_NAME simpsons_floyd)
+set(PROJECT_NAME a04_simpsons_floyd)
 message(STATUS "${PROJECT_NAME}: starting")
 #---------
 

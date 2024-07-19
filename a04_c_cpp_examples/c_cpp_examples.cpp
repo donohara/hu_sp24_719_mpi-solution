@@ -158,12 +158,12 @@ int main()
 
 	memory_example();
 
-    std::string filename_in = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/c_cpp_examples/adjacency_matrix_01_4x4_int.txt";
-    std::string filename_out = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/c_cpp_examples/test_data_out_int.txt";
+    std::string filename_in = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/a04_c_cpp_examples/adjacency_matrix_01_4x4_int.txt";
+    std::string filename_out = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/a04_c_cpp_examples/test_data_out_int.txt";
 	distance_matrix_test_int(filename_in, filename_out, 4, 4, 1);
 
-    filename_in = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/c_cpp_examples/adjacency_matrix_01_4x4_float.txt";
-    filename_out = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/c_cpp_examples/test_data_out_float.txt";
+    filename_in = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/a04_c_cpp_examples/adjacency_matrix_01_4x4_float.txt";
+    filename_out = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/a04_c_cpp_examples/test_data_out_float.txt";
     distance_matrix_test_float(filename_in, filename_out, 4, 4, 1);
 
     std::cout << "Done\n";
