@@ -9,7 +9,10 @@ project(${PROJECT_NAME})
 set(SOURCES
         main.cpp
         QMPI.cpp
-        QMPI.h)
+        QMPI.h
+        MyMPI.h
+        MyMPI.c
+)
 
 set(CMAKE_CXX_STANDARD 17)
 

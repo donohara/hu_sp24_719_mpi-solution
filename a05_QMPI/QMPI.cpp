@@ -44,7 +44,8 @@ int QMPI<T>::get_size(MPI_Datatype t) {
 	if (t == MPI_DOUBLE) return sizeof(double);
 	if (t == MPI_FLOAT) return sizeof(float);
 	if (t == MPI_INT) return sizeof(int);
-	cout << "Error: Unrecognized argument to 'get_size'" << endl << fflush;
+	cout << "Error: Unrecognized argument to 'get_size'" << endl;
+    fflush(stdout);
 	MPI_Abort(MPI_COMM_WORLD, TYPE_ERROR);
 }
 
@@ -57,7 +58,7 @@ T* QMPI<T>::my_malloc(int id, int bytes) {
 	T* buffer;
 	if ((buffer = malloc((size_t)bytes)) == NULL) {
 		cout << "Error: Malloc failed for process " << id << endl;
-		cout << fflush;
+        fflush(stdout);
 		MPI_Abort(MPI_COMM_WORLD, MALLOC_ERROR);
 	}
 	return buffer;
@@ -66,7 +67,8 @@ T* QMPI<T>::my_malloc(int id, int bytes) {
 template<class T>
 void QMPI<T>::terminate(int id, string error_message) {
 	if (!id) {
-		cout << "Error: " << error_message << endl << fflush;
+		cout << "Error: " << error_message << endl;
+        fflush(stdout);
 	}
 	MPI_Finalize();
 	exit(-1);
@@ -136,118 +138,126 @@ void QMPI<T>::replicate_block_vector(T* ablock, int n, T* arep, MPI_Datatype dty
  * the number of processes must be a square number.
  * 
  */
-template<class T>
-void QMPI<T>::read_checkerboard_matrix(string filename, T*** subs, 
-	T** storage, MPI_Datatype dtype, int* m, int* n, MPI_Comm grid_comm) {
-	
-	void* buffer;
-	int  coord[2], dest_id, grid_coord[2], grid_id, grid_period[2], grid_size[2];
-	int	datum_size;  //, dest_id;
-	void* laddr, ** lptr, * raddr, * rptr;
-	int	local_cols, local_rows, p;
-	MPI_Status status;
 
-	MPI_Comm_rank(grid_comm, &grid_id);
-	MPI_Comm_size(grid_comm, &p);
-	datum_size = get_size(dtype);
-
-	/*
-	 * process 0 open files
-	 * gets number of rows(m) and number of columns (n)
-	 * broadcasts this information to the other processes.
-	 */
-
-	if (grid_id == 0) {
-		file = new std::ifstream(filename);
-		if (*file) {
-			*file >> *m;
-			*file >> *n;
-		}
-		else {
-			*m = 0;
-		}
-	}
-	MPI_Bcast(m, 1, MPI_INT, 0, grid_comm);
-	if (!(*m)) {
-		MPI_Abort(MPI_COMM_WORLD, OPEN_FILE_ERROR);
-	}
-	MPI_Bcast(n, 1, MPI_INT, 0, grid_comm);
-
-	/*
-	 * each process determines the size of the submatrix
-	 * it is responsible for.
-	 */
-	MPI_Cart_get(grid_comm, 2, grid_size, grid_period, grid_coord);
-
-	local_rows = BLOCK_SIZE(grid_coord[0], grid_size[0], *m);
-	local_cols = BLOCK_SIZE(grid_coord[1], grid_size[1], *n);
-
-	/* Dynamically allocate two-dimensional matrix `subs`*/
-	*storage = my_malloc(grid_id, local_rows * local_cols * datum_size);
-	*subs = (T**)my_malloc(grid_id, local_rows * local_cols * PTR_SIZE);
-	lptr = (T*)*subs;
-	rptr = (T*)*storage;
-	for (int i = 0; i < local_rows; i++) {
-		*(lptr++) = (T*)rptr;
-		rptr += local_rows * datum_size;
-	}
-
-	/*
-	 * grid process 0 reads the matrix one row at a time
-	 * and distributes each row among the MPI porcesses.
-	 */
-	if (grid_id == 0) {
-		buffer = my_malloc(grid_id, *n * datum_size);
-	}
-
-	/* for each row of pocesses in the process grid ... */
-	for (int i = 0; i < grid_size[0]; i++) {
-		coord[0] = i;
-
-		/* for each matrix row controlled by this process row ... */
-		for (int j = 0; j < BLOCK_SIZE(i, grid_size[0], *m); j++) {
-			/* Read in a row of the matrix */
-			if (grid_id == 0) {
-				vector<T> v;
-				for (int k = 0; k < *n; k++) {
-					T val;
-					*file >> val;
-					v.push_back(val);
-				}
-				copy(v.begin(), v.end(), buffer);
-			}
-
-
-			/* Distribute it among processes in the grid row ... */
-			for (int k = 0; k < grid_size[1]; k++) {
-				coord[1] = k;
-				/* Find address of first element to send */
-				raddr = buffer + BLOCK_LOW(k, grid_size[1], *n) * datum_size;
-				/* determine the grid ID of the process getting subrow */
-				MPI_Cart_rank(grid_comm, coord, &dest_id);
-
-				/* Process 0 is responsible for sending ...*/
-				if (grid_id == 0) {
-					/* it is sending (copying) to itself. */
-					if (dest_id == 0) {
-						laddr = (*subs)[j];
-						memcpy(laddr, raddr, local_cols * datum_size);
-					}
-					else { /* ssending to another process */
-						MPI_Send(raddr, BLOCK_SIZE(k, grid_size[1], *n), dtype, dest_id, 0, grid_comm);
-					}
-				}
-				else if (grid_id == dest_id) {
-					MPI_Recv((*subs[j], local_cols, dtype, 0, 0, grid_comm, &status));
-				}
-			}
-		}
-	}
-
-	if (grid_id == 0) {
-		free(buffer);
-	}
-}
+// ----------------------------------
+//  commenting out since not used in a05, and haven't resolved pointer math error
+//
+// ----------------------------------
+//template<class T>
+//void QMPI<T>::read_checkerboard_matrix(string filename, T*** subs,
+//	T** storage, MPI_Datatype dtype, int* m, int* n, MPI_Comm grid_comm) {
+//
+//	void* buffer;
+//	int  coord[2], dest_id, grid_coord[2], grid_id, grid_period[2], grid_size[2];
+//	int	datum_size;  //, dest_id;
+//	void* laddr, ** lptr, * raddr, * rptr;
+//	int	local_cols, local_rows, p;
+//	MPI_Status status;
+//
+//	MPI_Comm_rank(grid_comm, &grid_id);
+//	MPI_Comm_size(grid_comm, &p);
+//	datum_size = get_size(dtype);
+//
+//	/*
+//	 * process 0 open files
+//	 * gets number of rows(m) and number of columns (n)
+//	 * broadcasts this information to the other processes.
+//	 */
+//
+//	if (grid_id == 0) {
+//		file = new std::ifstream(filename);
+//		if (*file) {
+//			*file >> *m;
+//			*file >> *n;
+//		}
+//		else {
+//			*m = 0;
+//		}
+//	}
+//	MPI_Bcast(m, 1, MPI_INT, 0, grid_comm);
+//	if (!(*m)) {
+//		MPI_Abort(MPI_COMM_WORLD, OPEN_FILE_ERROR);
+//	}
+//	MPI_Bcast(n, 1, MPI_INT, 0, grid_comm);
+//
+//	/*
+//	 * each process determines the size of the submatrix
+//	 * it is responsible for.
+//	 */
+//	MPI_Cart_get(grid_comm, 2, grid_size, grid_period, grid_coord);
+//
+//	local_rows = BLOCK_SIZE(grid_coord[0], grid_size[0], *m);
+//	local_cols = BLOCK_SIZE(grid_coord[1], grid_size[1], *n);
+//
+//	/* Dynamically allocate two-dimensional matrix `subs`*/
+//	*storage = my_malloc(grid_id, local_rows * local_cols * datum_size);
+//	*subs = (T**)my_malloc(grid_id, local_rows * local_cols * PTR_SIZE);
+//	lptr = (T*)*subs;
+//	rptr = (T*)*storage;
+//	for (int i = 0; i < local_rows; i++) {
+//		*(lptr++) = (T*)rptr;
+////		rptr += local_rows * datum_size;
+//		rptr =  (void*) ((long) local_rows * datum_size);
+//	}
+//
+//	/*
+//	 * grid process 0 reads the matrix one row at a time
+//	 * and distributes each row among the MPI porcesses.
+//	 */
+//	if (grid_id == 0) {
+//		buffer = my_malloc(grid_id, *n * datum_size);
+//	}
+//
+//	/* for each row of pocesses in the process grid ... */
+//	for (int i = 0; i < grid_size[0]; i++) {
+//		coord[0] = i;
+//
+//		/* for each matrix row controlled by this process row ... */
+//		for (int j = 0; j < BLOCK_SIZE(i, grid_size[0], *m); j++) {
+//			/* Read in a row of the matrix */
+//			if (grid_id == 0) {
+//				vector<T> v;
+//				for (int k = 0; k < *n; k++) {
+//					T val;
+//					*file >> val;
+//					v.push_back(val);
+//				}
+//				copy(v.begin(), v.end(), buffer);
+//			}
+//
+//
+//			/* Distribute it among processes in the grid row ... */
+//			for (int k = 0; k < grid_size[1]; k++) {
+//				coord[1] = k;
+//				/* Find address of first element to send */
+//				raddr = buffer + BLOCK_LOW(k, grid_size[1], *n) * datum_size;
+////				raddr = (void*) (((buffer + BLOCK_LOW(k, grid_size[1], *n)) * datum_size;
+//
+//				/* determine the grid ID of the process getting subrow */
+//				MPI_Cart_rank(grid_comm, coord, &dest_id);
+//
+//				/* Process 0 is responsible for sending ...*/
+//				if (grid_id == 0) {
+//					/* it is sending (copying) to itself. */
+//					if (dest_id == 0) {
+//						laddr = (*subs)[j];
+//						memcpy(laddr, raddr, local_cols * datum_size);
+//					}
+//					else { /* ssending to another process */
+//						MPI_Send(raddr, BLOCK_SIZE(k, grid_size[1], *n), dtype, dest_id, 0, grid_comm);
+//					}
+//				}
+//				else if (grid_id == dest_id) {
+//					MPI_Recv((*subs[j], local_cols, dtype, 0, 0, grid_comm, &status));
+//				}
+//			}
+//		}
+//	}
+//
+//	if (grid_id == 0) {
+//		free(buffer);
+//	}
+//}
 
 /*
  * reads a matrix from a file. the first two element of the files are integers

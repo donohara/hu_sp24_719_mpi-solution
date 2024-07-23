@@ -1,0 +1,30 @@
+MyMPI.c functions:
+
+void *my_malloc (
+void terminate (
+void create_mixed_xfer_arrays (
+void create_uniform_xfer_arrays (
+void replicate_block_vector (
+void read_checkerboard_matrix (
+void read_col_striped_matrix (
+void read_row_striped_matrix (
+void read_block_vector (
+void read_replicated_vector (
+void print_submatrix (
+void print_subvector (
+void print_checkerboard_matrix (
+void print_col_striped_matrix (
+void print_row_striped_matrix (
+void print_block_vector (
+void print_replicated_vector (
+
+
+/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/a05_myMPI/adjacency_matrix_4_x_4.txt
+
+
+ mpirun -np 3 xterm -e "lldb -o 'process attach -p %p' -f './a05_myMpi' --  /Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/a05_myMPI/adjacency_matrix_4_x_4.txt"
+
+
+ mpirun -np 3 xterm -e "lldb -o 'process attach -p %p' \
+       -f '/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/cmake-build-debug/a05_myMPI/a05_myMPI' \
+       --  /Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/a05_myMPI/adjacency_matrix_4_x_4.txt"

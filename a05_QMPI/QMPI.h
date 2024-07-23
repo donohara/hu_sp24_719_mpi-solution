@@ -50,8 +50,8 @@ public:
 	void replicate_block_vector(T* ablock, int n, T* arep, MPI_Datatype dtype, MPI_Comm comm);
 
 	/* INPUT */
-	void read_checkerboard_matrix(string filename, T*** subs, T** storage, MPI_Datatype dtype,
-		int* m, int* n, MPI_Comm grid_comm);
+//	void read_checkerboard_matrix(string filename, T*** subs, T** storage, MPI_Datatype dtype,
+//		int* m, int* n, MPI_Comm grid_comm);
 	void read_col_striped_matrix(string filename, T*** subs, T** storage, MPI_Datatype dtype,
 		int* m, int* n, MPI_Comm comm);
 	void read_row_striped_matrix(string filename, T*** subs, T** storage, MPI_Datatype dtype,
