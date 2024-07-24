@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.27)
 
-#---------
-set(PROJECT_NAME mpi-sample)
-message(STATUS "${PROJECT_NAME}: starting")
-#---------
+set(EXECUTABLE_NAME "mpi-sample")
+message(STATUS "${EXECUTABLE_NAME}: build starting")
 
-project(${PROJECT_NAME})
 set(SOURCES
         Example_0.cpp
         Example_1.cpp
@@ -20,25 +17,20 @@ set(SOURCES
 #        sieve_of_eratosthenes_.cpp
 )
 
-set(CMAKE_CXX_STANDARD 17)
-
 find_package(MPI REQUIRED)
+
 # Make sure to use the MPI compiler wrappers: mpicc, mpicxx, etc.
 set(CMAKE_CXX_COMPILER mpicxx)
+
 # Include MPI includes
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
-# Include tclap includes
+## Include tclap includes
 include_directories(SYSTEM /opt/homebrew/Cellar/tclap/1.2.5/include)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${MPI_C_LIBRARIES})
+add_executable(${EXECUTABLE_NAME} ${SOURCES})
+target_link_libraries(${EXECUTABLE_NAME} ${MPI_C_LIBRARIES})
 
 #---------
-message(STATUS "${PROJECT_NAME}: done")
-#set(CMAKE_CXX_STANDARD 14)
+message(STATUS "${EXECUTABLE_NAME}: build done")
 
-#
-#include_directories(SYSTEM ${MPI_INCLUDE_PATH})
-#
-#add_executable(mpi-sample.cpp)

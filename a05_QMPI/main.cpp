@@ -1,7 +1,6 @@
 #include <iostream>
 //#include <stdio.h>
 #include "mpi.h"
-#include "MyMPI.h"
 #include "QMPI.h"
 
 //= port from c to cpp

@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
     std::string& fileName2 = fileName;
     fileName2 = "/Users/donohara/Data/50_HU/_github/hu_sp24_719_mpi_solution/mpi-sample/adjacency_matrix_01_4x4_int.txt";
 
+
     switch (example_no)
     {
     case 0: 
